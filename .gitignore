@@ -1,0 +1,10 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Ignore generated reports
+reports/*
+!reports/.gitkeep
+
+# macOS
+.DS_Store
