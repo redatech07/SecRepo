@@ -58,24 +58,12 @@ def scan_repository(target_d):
     "lost+found",
     }
 
-    ignored_files = {
-    # macOS
-    ".DS_Store",
-    "._.DS_Store",
-
-    # Windows
-    "Thumbs.db",
-    "ehthumbs.db",
-    "desktop.ini",
-
-    "README.md",
-    }
+   
 
     for current_root, dirs, files in os.walk(root):
         dirs[:] = [d for d in dirs if d not in ignored_dirs]
         for file in files:
-            if file in ignored_files:
-                continue
+            
             file_path = Path(current_root) / file
 
             if should_scan_file(file_path):
