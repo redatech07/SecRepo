@@ -18,6 +18,7 @@ def get_args():
 
 args = get_args()
 target_d = args.directory
+git_root = get_git_root(target_d)
 
 print("\n" + "=" * 55)
 print("                       SECREPO")
@@ -43,8 +44,18 @@ for file in all_files:
 
     for finding in findings:
 
+        absolute_path = (Path.cwd() / file).resolve()
+        try:
+            relative_path = absolute_path.relative_to(git_root).as_posix()
+
+        except ValueError:
+            display_path = str(file)
+
+        else:
+            display_path = relative_path
+
         findings_list.append({
-            "file": str(file),
+            "file": display_path,
             "line": finding["line"],
             "type": finding["type"],
             "keyword": finding["keyword"]
@@ -63,10 +74,11 @@ print(f"Secrets detected : {len(findings_list)}")
 print("\n[2] SECRET DETECTION")
 print("-" * 55)
 
+
 if findings_list:
 
     for finding in findings_list:
-
+        
         print(
             f"[!] {finding['file']} | "
             f"Line: {finding['line']} | "
@@ -81,7 +93,6 @@ else:
 print("\n[3] GIT ANALYSIS")
 print("-" * 55)
 
-git_root = get_git_root(target_d)
 git_results = []
 
 if git_root:
@@ -94,29 +105,29 @@ if git_root:
 
     for file in all_files:
 
-        absolute_path = (Path.cwd() / file).resolve()
+        absolute_path1 = (Path.cwd() / file).resolve()
 
         try:
-            relative_path = absolute_path.relative_to(git_root).as_posix()
+            relative_path1 = absolute_path1.relative_to(git_root).as_posix()
 
         except ValueError:
             git_status = "OUTSIDE_GIT"
-            display_path = str(file)
+            display_path1 = str(file)
 
         else:
-            display_path = relative_path
+            display_path1 = relative_path1
 
-            if relative_path in tracked_files:
+            if relative_path1 in tracked_files:
                 git_status = "TRACKED"
-            elif relative_path in untracked_files:
+            elif relative_path1 in untracked_files:
                 git_status = "UNTRACKED"
-            elif relative_path in ignored_files:
+            elif relative_path1 in ignored_files:
                 git_status = "IGNORED"
             else:
                 git_status = "UNKNOWN"
 
         git_results.append({
-            "file": display_path,
+            "file": display_path1,
             "status": git_status
         })
 
