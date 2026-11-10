@@ -44,15 +44,16 @@ for file in all_files:
 
     for finding in findings:
 
-        absolute_path = (Path.cwd() / file).resolve()
-        try:
-            relative_path = absolute_path.relative_to(git_root).as_posix()
+        absolute_path = Path(file).resolve()
+        if git_root:
+            try:
+                display_path = absolute_path.relative_to(git_root).as_posix()
 
-        except ValueError:
-            display_path = str(file)
+            except ValueError:
+                display_path = absolute_path.relative_to(Path(target_d).resolve()).as_posix()
 
         else:
-            display_path = relative_path
+            display_path = absolute_path.relative_to(Path(target_d).resolve()).as_posix()
 
         findings_list.append({
             "file": display_path,
@@ -105,7 +106,7 @@ if git_root:
 
     for file in all_files:
 
-        absolute_path1 = (Path.cwd() / file).resolve()
+        absolute_path1 = Path(file).resolve()
 
         try:
             relative_path1 = absolute_path1.relative_to(git_root).as_posix()
